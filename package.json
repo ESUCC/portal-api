@@ -1,0 +1,32 @@
+{
+  "name": "portal-api",
+  "version": "0.0.1",
+  "description": "A TypeScript library for interacting with the portal-ex server.",
+  "main": "./dist/Portal.js",
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "tsc",
+    "test": "jest --verbose"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "testRegex": "^.+\\.spec\\.ts$",
+    "testURL": "http://localhost:8080/"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.9",
+    "jest": "^24.1.0",
+    "ts-jest": "^24.0.0",
+    "typescript": "^3.3.3333"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "validator": "^10.11.0"
+  }
+}
