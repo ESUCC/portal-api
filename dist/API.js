@@ -10,43 +10,46 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Portal_1 = require("./Portal");
-const Settings = __importStar(require("./Settings"));
-const axios_1 = __importDefault(require("axios"));
-class API {
-    static list(model) {
-        return new Promise((resolve, reject) => {
+var Portal_1 = require("./Portal");
+var Settings = __importStar(require("./Settings"));
+var axios_1 = __importDefault(require("axios"));
+var qs_1 = __importDefault(require("qs"));
+var API = /** @class */ (function () {
+    function API() {
+    }
+    API.list = function (model) {
+        return new Promise(function (resolve, reject) {
             API.request({
                 'params': {
                     'm': model
                 }
             })
-                .then((response) => {
+                .then(function (response) {
                 resolve(response);
             })
-                .catch((error) => {
+                .catch(function (error) {
                 reject(error);
             });
         });
-    }
-    static view(model, id) {
-        return new Promise((resolve, reject) => {
+    };
+    API.view = function (model, id) {
+        return new Promise(function (resolve, reject) {
             API.request({
                 'params': {
                     'm': model,
                     'id': id
                 }
             })
-                .then((response) => {
+                .then(function (response) {
                 resolve(response);
             })
-                .catch((error) => {
+                .catch(function (error) {
                 reject(error);
             });
         });
-    }
-    static add(model, data) {
-        return new Promise((resolve, reject) => {
+    };
+    API.add = function (model, data) {
+        return new Promise(function (resolve, reject) {
             API.request({
                 'params': {
                     'm': model,
@@ -54,16 +57,16 @@ class API {
                 },
                 'data': data
             })
-                .then((response) => {
+                .then(function (response) {
                 resolve(response);
             })
-                .catch((error) => {
+                .catch(function (error) {
                 reject(error);
             });
         });
-    }
-    static edit(model, id, data) {
-        return new Promise((resolve, reject) => {
+    };
+    API.edit = function (model, id, data) {
+        return new Promise(function (resolve, reject) {
             API.request({
                 'params': {
                     'm': model,
@@ -72,16 +75,16 @@ class API {
                 },
                 'data': data
             })
-                .then((response) => {
+                .then(function (response) {
                 resolve(response);
             })
-                .catch((error) => {
+                .catch(function (error) {
                 reject(error);
             });
         });
-    }
-    static delete(model, id) {
-        return new Promise((resolve, reject) => {
+    };
+    API.delete = function (model, id) {
+        return new Promise(function (resolve, reject) {
             API.request({
                 'params': {
                     'm': model,
@@ -89,32 +92,32 @@ class API {
                     'id': id
                 }
             })
-                .then((response) => {
+                .then(function (response) {
                 resolve(response);
             })
-                .catch((error) => {
+                .catch(function (error) {
                 reject(error);
             });
         });
-    }
-    static form(model) {
-        return new Promise((resolve, reject) => {
+    };
+    API.form = function (model) {
+        return new Promise(function (resolve, reject) {
             API.request({
                 'params': {
                     'm': model,
                     'a': 'form'
                 }
             })
-                .then((response) => {
+                .then(function (response) {
                 resolve(response);
             })
-                .catch((error) => {
+                .catch(function (error) {
                 reject(error);
             });
         });
-    }
-    static request(query) {
-        return new Promise((resolve, reject) => {
+    };
+    API.request = function (query) {
+        return new Promise(function (resolve, reject) {
             if (Portal_1.Portal.DEBUG) {
                 console.log(query);
             }
@@ -122,26 +125,33 @@ class API {
                 ? query.type
                 : 'POST';
             if (query.type.toLowerCase() == 'post') {
-                axios_1.default.post(API.url(query.params), query.data)
-                    .then((response) => {
-                    resolve(response);
+                axios_1.default.post(API.url(query.params), qs_1.default.stringify(query.data))
+                    .then(function (response) {
+                    if (Portal_1.Portal.DEBUG) {
+                        console.log(response);
+                    }
+                    resolve(response.data);
                 })
-                    .catch((error) => {
+                    .catch(function (error) {
+                    if (Settings.DEBUG)
+                        console.log(error);
                     reject(error);
                 });
             }
         });
-    }
-    static url(params) {
-        const keys = Object.keys(params);
-        let url = API.URL + "?";
-        for (let key of keys) {
+    };
+    API.url = function (params) {
+        var keys = Object.keys(params);
+        var url = API.URL + "?";
+        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+            var key = keys_1[_i];
             // @ts-ignore
-            url += key + "=" + params[key];
+            url += key + "=" + params[key] + "&";
         }
         return url;
-    }
-}
-API.URL = Settings.URL + '/api/' + Settings.VERSION;
+    };
+    API.URL = Settings.URL + '/api/' + Settings.VERSION;
+    return API;
+}());
 exports.API = API;
 //# sourceMappingURL=API.js.map

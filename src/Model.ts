@@ -1,8 +1,7 @@
 import {Portal} from "./Portal";
+import {ModelInterface, ModelInterfaceStatic} from "./interfaces/ModelInterface";
 
 export abstract class Model {
-    abstract model_name: string;
-    abstract booted: boolean = false;
     protected attributes: JSON;
 
     protected constructor(params?: any) {
@@ -12,9 +11,7 @@ export abstract class Model {
             this.addAttributes(params)
     }
 
-    abstract boot(): void;
-
-    protected addAttributes(params: any) {
+    addAttributes(params: any) {
         const keys = Object.keys(params);
 
         for (let key of keys) {
@@ -22,9 +19,13 @@ export abstract class Model {
         }
     }
 
-    protected addAttribute(name: string, value: any) {
+    addAttribute(name: string, value: any) {
         // @ts-ignore
         this.attributes[name] = value;
+    }
+
+    getAttributes() {
+        return this.attributes;
     }
 
     get(name: string) {
@@ -38,30 +39,85 @@ export abstract class Model {
     }
 
     set(name: string, value: any) {
-        this.addAttribute(name, value);
+        if (value == undefined) this.deleteAttribute(name);
+        else this.addAttribute(name, value);
     }
 
-    all() {
-        return Portal.API.list(this.model_name);
+    deleteAttribute(name: string) {
+        // @ts-ignore
+        delete this.attributes[name];
     }
 
-    find(id: string) {
-        return Portal.API.view(this.model_name, id);
+    static all(model_name: string) {
+        return Portal.API.list(model_name);
     }
 
-    add() {
-        return Portal.API.add(this.model_name, this.attributes);
+    static find(model_name: string, id: string) {
+        return Portal.API.view(model_name, id);
     }
 
-    edit(id: string) {
-        return Portal.API.edit(this.model_name, id, this.attributes);
+    update(model_name: string) {
+        return Model.find(model_name, this.get('slug')).then((response) => {
+            this.addAttributes(response[model_name]);
+
+            return response;
+        });
     }
 
-    delete(id: string) {
-        return Portal.API.delete(this.model_name, id);
+    save(model_name: string, type: ModelInterfaceStatic) {
+        let promise;
+
+        if (! type.form.validate(this.getAttributes())) {
+            promise = Promise.reject(model_name + ' failed to validate.');
+        }
+        else if (this.get('slug') === undefined) {
+            promise = Portal.API.add(model_name, this.attributes).then((response) => {
+                this.addAttributes(response[model_name]);
+
+                return response;
+            });
+        } else {
+            promise = Portal.API.edit(model_name, this.get('slug'), this.attributes).then((response) => {
+                this.addAttributes(response[model_name]);
+
+                return response;
+            });
+        }
+
+        return promise;
     }
 
-    form() {
-        return Portal.API.form(this.model_name);
+    delete(model_name: string, id: string) {
+        return Portal.API.delete(model_name, id);
+    }
+
+    static define(model_name: string) {
+        return Portal.API.form(model_name).then((response) => {
+            return response[model_name];
+        });
+    }
+
+    /**
+     * Compares two models.
+     *
+     * Returns 0 if models are of the same type and have the same slug.
+     * The return value is negative if they are different model types
+     * and positive if they are different slugs but of the same type.
+     *
+     * @param model1
+     * @param model2
+     *
+     * @return number
+     */
+    static compare(model1: ModelInterfaceStatic & ModelInterface, model2: ModelInterfaceStatic & ModelInterface): number {
+        let out: number;
+
+        if (model1.model_name !== model2.model_name) {
+            out = -1;
+        } else if (model1.get('slug') !== model2.get('slug')) {
+            out = 1;
+        } else out = 0;
+
+        return out;
     }
 }

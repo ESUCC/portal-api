@@ -4,9 +4,9 @@ import pluralize = require("pluralize");
 import {Form} from "../form/Form";
 
 @staticImplements<ModelInterfaceStatic>()
-export class App extends Model implements ModelInterface {
-    type: ModelInterfaceStatic = App;
-    static model_name: string = 'app';
+export class User extends Model implements ModelInterface {
+    type: ModelInterfaceStatic = User;
+    static model_name: string = 'user';
 
     static form: Form;
     static booted: boolean = false;

@@ -4,8 +4,24 @@ export class Form {
     protected elements: FormElement[] = [];
     protected invalidElements: FormElement[] = [];
 
-    constructor(elements?: FormElement[]) {
-        if (elements !== undefined) this.elements = elements;
+    constructor(elements?: FormElement[] | JSON) {
+        if (elements !== undefined) {
+            if (Array.isArray(elements)) this.elements = elements;
+            else {
+                this.fromJSON(elements);
+            }
+        }
+
+    }
+
+    private fromJSON(elements: JSON) {
+        let keys = Object.keys(elements);
+
+        for (let key of keys) {
+            // @ts-ignore
+            let elem = new FormElement(key, elements[key].type, elements[key].required);
+            this.addElement(elem);
+        }
     }
 
     addElement(element: FormElement) {
@@ -51,25 +67,15 @@ export class Form {
         return this.invalidElements.length === 0;
     }
 
-    validateWRONG(data: any) {
-        this.invalidElements = [];
+    factory() {
+        // @ts-ignore
+        let out: JSON = {};
 
-        let keys = Object.keys(data);
-
-        for (let key of keys) {
-            key = key.toLowerCase();
-            let elem = this.elements.find(elem => elem.name.toLowerCase() == key);
-            let valid: boolean = false;
-
+        this.elements.filter((value) => {
             // @ts-ignore
-            valid = elem.validate(data[key]);
+            out[value.name.toLowerCase()] = value.fake();
+        });
 
-            if (! valid) {
-                // @ts-ignore
-                this.invalidElements.push(elem);
-            }
-        }
-
-        return this.invalidElements.length === 0;
+        return out;
     }
 }

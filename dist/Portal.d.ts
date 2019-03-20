@@ -1,5 +1,6 @@
 import { API as importAPI } from './API';
 import { Model as importModel } from './Model';
+import { App as importApp } from './models/App';
 export declare namespace Portal {
     const VERSION: string;
     const URL: string;
@@ -8,5 +9,8 @@ export declare namespace Portal {
     type API = importAPI;
     const Model: typeof importModel;
     type Model = importModel;
+    const App: typeof importApp;
+    type App = importApp;
+    function ucfirst(str: string): string;
 }
 //# sourceMappingURL=Portal.d.ts.map
