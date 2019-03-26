@@ -1,13 +1,13 @@
 {
   "private": true,
   "name": "portal-api",
-  "version": "0.0.2",
+  "version": "0.1.2",
   "description": "A TypeScript library for interacting with the portal-ex server.",
   "main": "./dist/Portal.js",
   "scripts": {
     "prepare": "npm run build",
     "build": "tsc",
-    "test": "jest --verbose"
+    "test": "jest"
   },
   "jest": {
     "transform": {

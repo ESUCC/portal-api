@@ -1,5 +1,5 @@
 import {FormElement} from "./FormElement";
-import {Portal} from "../Portal";
+import * as Portal from '../../Portal';
 
 describe('Form Element', () => {
     test('Refuses to validate if required and not set', () => {

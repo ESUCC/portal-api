@@ -1,4 +1,4 @@
-import {Portal} from "./Portal";
+import * as Portal from './Portal';
 import {ModelInterface, ModelInterfaceStatic} from "./interfaces/ModelInterface";
 
 export abstract class Model {

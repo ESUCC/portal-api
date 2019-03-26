@@ -1,3 +1,4 @@
+import { Form } from "../datatypes/form/Form";
 export interface ModelInterface {
     type: ModelInterfaceStatic;
     addAttributes(params: any): any;
@@ -7,15 +8,18 @@ export interface ModelInterface {
     update(): any;
     save(): any;
     delete(): any;
-    form(): any;
+    validate(): boolean;
 }
 export interface ModelInterfaceStatic {
     model_name: string;
     booted: boolean;
+    form: Form;
     boot(): void;
     all(): any;
     find(id: string): any;
     create(attributes: any): any;
+    define(): any;
+    factory(): any;
 }
 export declare function staticImplements<T>(): (constructor: T) => void;
 //# sourceMappingURL=ModelInterface.d.ts.map

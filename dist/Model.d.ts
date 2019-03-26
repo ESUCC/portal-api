@@ -4,15 +4,16 @@ export declare abstract class Model {
     protected constructor(params?: any);
     addAttributes(params: any): void;
     addAttribute(name: string, value: any): void;
+    getAttributes(): JSON;
     get(name: string): any;
     set(name: string, value: any): void;
     deleteAttribute(name: string): void;
     static all(model_name: string): Promise<any>;
     static find(model_name: string, id: string): Promise<any>;
     update(model_name: string): Promise<any>;
-    save(model_name: string): Promise<any>;
+    save(model_name: string, type: ModelInterfaceStatic): Promise<any>;
     delete(model_name: string, id: string): Promise<any>;
-    form(model_name: string): Promise<any>;
+    static define(model_name: string): Promise<any>;
     /**
      * Compares two models.
      *

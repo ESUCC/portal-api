@@ -1,7 +1,8 @@
 import {Model} from "../Model";
 import {ModelInterface, ModelInterfaceStatic, staticImplements} from "../interfaces/ModelInterface";
 import pluralize = require("pluralize");
-import {Form} from "../form/Form";
+import {Form} from "../datatypes/form/Form";
+import {ImageManager} from "../datatypes/image/ImageManager";
 
 @staticImplements<ModelInterfaceStatic>()
 export class App extends Model implements ModelInterface {
@@ -11,8 +12,14 @@ export class App extends Model implements ModelInterface {
     static form: Form;
     static booted: boolean = false;
 
+    icon = new ImageManager();
+
     constructor(params?: any) {
         super(params);
+
+        this.set('icon', super.get('icon'));
+        super.set('icon', undefined);
+
         (this.type.booted || this.type.boot())
     }
 
@@ -24,11 +31,24 @@ export class App extends Model implements ModelInterface {
     }
 
     get(name: string) {
+        if (name == 'icon')
+            return this.icon.resolve();
         return super.get(name);
     }
 
     set(name: string, value: any) {
+        if (name == 'icon' && this.icon.old == undefined)
+            this.icon.old = value;
         return super.set(name, value);
+    }
+
+    getAttributes(): JSON {
+        let attributes = super.getAttributes();
+
+        //  @ts-ignore
+        attributes.icon = this.icon.resolve();
+
+        return attributes;
     }
 
     static all() {
@@ -57,6 +77,7 @@ export class App extends Model implements ModelInterface {
     }
 
     save() {
+
         return super.save(this.type.model_name, this.type);
     }
 
@@ -87,6 +108,6 @@ export class App extends Model implements ModelInterface {
     }
 
     validate(): boolean {
-        return this.type.form.validate(super.getAttributes());
+        return this.type.form.validate(this.getAttributes());
     }
 }

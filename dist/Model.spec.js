@@ -34,12 +34,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var Portal_1 = require("./Portal");
-var App_1 = require("./models/App");
+var Portal = __importStar(require("./Portal"));
 var MODELS = [
-    App_1.App,
+    Portal.App,
+    Portal.User,
 ];
 var modelAllLoaded = {};
 var testModel;
@@ -64,22 +71,26 @@ function modelAll(model) {
     });
 }
 var _loop_1 = function (model) {
-    describe(Portal_1.Portal.ucfirst(model.model_name), function () {
-        test('Model will boot', function () {
-            new model(); // should boot
-            expect(Portal_1.Portal.App.booted).toBe(true);
+    describe(Portal.ucfirst(model.model_name), function () {
+        test(model.model_name + ' will boot', function () {
+            return Portal.init().then(function () {
+                expect(model.booted).toBe(true);
+            });
         });
-        test('Model can access API', function () {
+        test(model.model_name + ' can access API', function () {
             return modelAll(model).then(function (all) {
                 expect(all).toBeDefined();
             });
         });
-        test('`all()` returns a promise with list of model instances', function () {
+        test(model.model_name + ' builds form', function () {
+            expect(model.form).toBeDefined();
+        });
+        test('`all()` returns a promise with list of ' + model.model_name + ' instances', function () {
             return modelAll(model).then(function (all) {
                 expect(all[0].get('slug')).toBeDefined();
             });
         });
-        test('`find(slug)` returns a promise with a model instance', function () {
+        test('`find(slug)` returns a promise with a ' + model.model_name + ' instance', function () {
             return model.all().then(function (models) { return __awaiter(_this, void 0, void 0, function () {
                 var slug;
                 return __generator(this, function (_a) {
@@ -104,7 +115,7 @@ var _loop_1 = function (model) {
                 });
             }); });
         });
-        test('Model can set and get attributes', function () {
+        test(model.model_name + ' can set and get attributes', function () {
             var attribute = 'test_attribute';
             var value = "test_value";
             if (testModel == undefined) {
@@ -115,18 +126,13 @@ var _loop_1 = function (model) {
             testModel.set(attribute, undefined);
             testModel = undefined;
         });
-        test('`create(attributes)` returns a promise with a model ' +
-            'instance that has been saved to the server', function () {
-            if (model.model_name == App_1.App.model_name) {
-                return model.create({
-                    'name': 'test-name',
-                    'url': 'https://test.url',
-                    'iconPath': 'testing/path'
-                }).then(function (response) {
-                    expect(response.get('slug')).toBeDefined();
-                    testModel = response;
-                });
-            }
+        test('`create(attributes)` returns a promise with a ' + model.model_name +
+            ' instance that has been saved to the server', function () {
+            return model.create(model.form.factory()).then(function (response) {
+                expect(response).toBeInstanceOf(model);
+                expect(response.get('slug')).toBeDefined();
+                testModel = response;
+            });
         });
         test('`save()` method saves via the API', function () { return __awaiter(_this, void 0, void 0, function () {
             var name;
@@ -146,7 +152,7 @@ var _loop_1 = function (model) {
                 }
             });
         }); });
-        test('`update()` method updates the model with the current ' +
+        test('`update()` method updates the ' + model.model_name + ' with the current ' +
             'information from the API', function () { return __awaiter(_this, void 0, void 0, function () {
             var tmp_model, name;
             return __generator(this, function (_a) {
@@ -179,7 +185,7 @@ var _loop_1 = function (model) {
                 }
             });
         }); });
-        test('`delete()` method deletes the model via the API', function () { return __awaiter(_this, void 0, void 0, function () {
+        test('`delete()` method deletes the ' + model.model_name + ' via the API', function () { return __awaiter(_this, void 0, void 0, function () {
             var slug;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -202,6 +208,12 @@ var _loop_1 = function (model) {
                 }
             });
         }); });
+        test('`factory()` method returns a fake ' + model.model_name, function () {
+            expect(model.factory()).toBeInstanceOf(model);
+        });
+        test('`validate()` validates the ' + model.model_name, function () {
+            expect(model.factory().validate()).toBeTruthy();
+        });
     });
 };
 for (var _i = 0, MODELS_1 = MODELS; _i < MODELS_1.length; _i++) {

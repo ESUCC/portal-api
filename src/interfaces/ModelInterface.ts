@@ -1,4 +1,4 @@
-import {Form} from "../form/Form";
+import {Form} from "../datatypes/form/Form";
 
 export interface ModelInterface {
     type: ModelInterfaceStatic;

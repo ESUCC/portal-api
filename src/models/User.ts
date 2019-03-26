@@ -1,7 +1,7 @@
 import {Model} from "../Model";
 import {ModelInterface, ModelInterfaceStatic, staticImplements} from "../interfaces/ModelInterface";
 import pluralize = require("pluralize");
-import {Form} from "../form/Form";
+import {Form} from "../datatypes/form/Form";
 
 @staticImplements<ModelInterfaceStatic>()
 export class User extends Model implements ModelInterface {

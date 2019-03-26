@@ -1,5 +1,6 @@
 export declare class API {
-    static readonly URL: string;
+    static URL: string;
+    static boot(): Promise<void>;
     static list(model: string): Promise<any>;
     static view(model: string, id: string): Promise<any>;
     static add(model: string, data: JSON): Promise<any>;

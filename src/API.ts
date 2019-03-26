@@ -1,10 +1,14 @@
-import { Portal } from './Portal';
+import * as Portal from './Portal';
 import * as Settings from './Settings';
 import axios from 'axios';
 import qs from 'qs';
 
 export class API {
-    static readonly URL = Settings.URL + '/api/' + Settings.VERSION;
+    static URL: string;
+
+    static async boot() {
+        this.URL = Settings.URL + '/api/' + Settings.VERSION;
+    }
 
     static list(model: string): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -113,7 +117,7 @@ export class API {
 
     static request(query: RequestData): Promise<any> {
         return new Promise((resolve, reject) => {
-            if (Portal.DEBUG) {
+            if (Portal.Settings.DEBUG) {
                 console.log(query);
             }
 
@@ -124,7 +128,7 @@ export class API {
             if (query.type.toLowerCase() == 'post') {
                 axios.post(API.url(query.params), qs.stringify(query.data))
                     .then((response) => {
-                        if (Portal.DEBUG) {
+                        if (Portal.Settings.DEBUG) {
                             console.log(response);
                         }
 
@@ -133,7 +137,7 @@ export class API {
                         resolve(response.data);
                     })
                     .catch((error) => {
-                        if (Settings.DEBUG) console.log(error);
+                        if (Portal.Settings.DEBUG) console.log(error);
                         reject(error)
                     })
             }

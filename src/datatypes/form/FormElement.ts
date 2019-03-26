@@ -77,7 +77,7 @@ export class FormElement {
                 break;
             case 'file':
             default:
-                fake = 'placeholder :(';
+                fake = faker.image.abstract();
                 break;
         }
 

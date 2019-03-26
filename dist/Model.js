@@ -1,6 +1,13 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var Portal_1 = require("./Portal");
+var Portal = __importStar(require("./Portal"));
 var Model = /** @class */ (function () {
     function Model(params) {
         // @ts-ignore
@@ -18,6 +25,9 @@ var Model = /** @class */ (function () {
     Model.prototype.addAttribute = function (name, value) {
         // @ts-ignore
         this.attributes[name] = value;
+    };
+    Model.prototype.getAttributes = function () {
+        return this.attributes;
     };
     Model.prototype.get = function (name) {
         if (this.attributes.hasOwnProperty(name)) {
@@ -40,10 +50,10 @@ var Model = /** @class */ (function () {
         delete this.attributes[name];
     };
     Model.all = function (model_name) {
-        return Portal_1.Portal.API.list(model_name);
+        return Portal.API.list(model_name);
     };
     Model.find = function (model_name, id) {
-        return Portal_1.Portal.API.view(model_name, id);
+        return Portal.API.view(model_name, id);
     };
     Model.prototype.update = function (model_name) {
         var _this = this;
@@ -52,18 +62,20 @@ var Model = /** @class */ (function () {
             return response;
         });
     };
-    Model.prototype.save = function (model_name) {
-        // return Portal.API.add(model_name, this.attributes);
+    Model.prototype.save = function (model_name, type) {
         var _this = this;
         var promise;
-        if (this.get('slug') === undefined) {
-            promise = Portal_1.Portal.API.add(model_name, this.attributes).then(function (response) {
+        if (!type.form.validate(this.getAttributes())) {
+            promise = Promise.reject(model_name + ' failed to validate.');
+        }
+        else if (this.get('slug') === undefined) {
+            promise = Portal.API.add(model_name, this.attributes).then(function (response) {
                 _this.addAttributes(response[model_name]);
                 return response;
             });
         }
         else {
-            promise = Portal_1.Portal.API.edit(model_name, this.get('slug'), this.attributes).then(function (response) {
+            promise = Portal.API.edit(model_name, this.get('slug'), this.attributes).then(function (response) {
                 _this.addAttributes(response[model_name]);
                 return response;
             });
@@ -71,10 +83,12 @@ var Model = /** @class */ (function () {
         return promise;
     };
     Model.prototype.delete = function (model_name, id) {
-        return Portal_1.Portal.API.delete(model_name, id);
+        return Portal.API.delete(model_name, id);
     };
-    Model.prototype.form = function (model_name) {
-        return Portal_1.Portal.API.form(model_name);
+    Model.define = function (model_name) {
+        return Portal.API.form(model_name).then(function (response) {
+            return response[model_name];
+        });
     };
     /**
      * Compares two models.

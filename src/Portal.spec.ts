@@ -1,4 +1,4 @@
-import { Portal } from './Portal';
+import * as Portal from './Portal';
 import * as Settings from './Settings';
 
 describe('Settings in Portal namespace', () => {
@@ -7,7 +7,7 @@ describe('Settings in Portal namespace', () => {
     for (let key of keys) {
         test(key, () => {
             // @ts-ignore
-            expect(Portal[key]).toBe(Settings[key]);
+            expect(Portal.Settings[key]).toBe(Settings[key]);
         })
     }
 });
