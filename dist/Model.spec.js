@@ -46,26 +46,85 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Portal = __importStar(require("./Portal"));
 var MODELS = [
     Portal.App,
+    Portal.Attribute,
+    Portal.Group,
+    Portal.GroupType,
+    Portal.IpAddress,
+    Portal.OwnerType,
+    Portal.Privilege,
+    Portal.Tab,
     Portal.User,
 ];
 var modelAllLoaded = {};
+var fakedModels = {};
 var testModel;
 function modelAll(model) {
     return __awaiter(this, void 0, void 0, function () {
+        var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     if (!!modelAllLoaded.hasOwnProperty(model.model_name)) return [3 /*break*/, 2];
-                    return [4 /*yield*/, model.all().then(function (response) {
-                            // @ts-ignore
-                            modelAllLoaded[model.model_name] = response;
-                        })];
+                    return [4 /*yield*/, model.all().then(function (response) { return __awaiter(_this, void 0, void 0, function () {
+                            var modelList, tmp_model;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        modelList = response;
+                                        if (!(response == undefined || (Array.isArray(response) && response.length == 0))) return [3 /*break*/, 2];
+                                        tmp_model = model.factory();
+                                        return [4 /*yield*/, tmp_model.save()];
+                                    case 1:
+                                        _a.sent();
+                                        modelList = [tmp_model];
+                                        // @ts-ignore
+                                        fakedModels[model.model_name] = [tmp_model];
+                                        _a.label = 2;
+                                    case 2:
+                                        // @ts-ignore
+                                        modelAllLoaded[model.model_name] = modelList;
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); })];
                 case 1:
                     _a.sent();
                     _a.label = 2;
                 case 2: 
                 // @ts-ignore
                 return [2 /*return*/, modelAllLoaded[model.model_name]];
+            }
+        });
+    });
+}
+function cleanup() {
+    return __awaiter(this, void 0, void 0, function () {
+        var keys, _i, keys_1, key, _a, _b, model;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    keys = Object.keys(fakedModels);
+                    _i = 0, keys_1 = keys;
+                    _c.label = 1;
+                case 1:
+                    if (!(_i < keys_1.length)) return [3 /*break*/, 6];
+                    key = keys_1[_i];
+                    _a = 0, _b = fakedModels[key];
+                    _c.label = 2;
+                case 2:
+                    if (!(_a < _b.length)) return [3 /*break*/, 5];
+                    model = _b[_a];
+                    return [4 /*yield*/, model.delete()];
+                case 3:
+                    _c.sent();
+                    _c.label = 4;
+                case 4:
+                    _a++;
+                    return [3 /*break*/, 2];
+                case 5:
+                    _i++;
+                    return [3 /*break*/, 1];
+                case 6: return [2 /*return*/];
             }
         });
     });
@@ -91,6 +150,7 @@ var _loop_1 = function (model) {
             });
         });
         test('`find(slug)` returns a promise with a ' + model.model_name + ' instance', function () {
+            // @ts-ignore
             return model.all().then(function (models) { return __awaiter(_this, void 0, void 0, function () {
                 var slug;
                 return __generator(this, function (_a) {
@@ -102,10 +162,10 @@ var _loop_1 = function (model) {
                                 })];
                         case 1:
                             _a.sent();
+                            // @ts-ignore
                             return [2 /*return*/, model.find(slug).then(function (tmp_model) {
                                     // @ts-ignore
                                     if (tmp_model == undefined) {
-                                        console.log(tmp_model);
                                         throw Error('tmp_model not defined');
                                     }
                                     expect(tmp_model.get('slug')).toBe(slug);
@@ -128,6 +188,7 @@ var _loop_1 = function (model) {
         });
         test('`create(attributes)` returns a promise with a ' + model.model_name +
             ' instance that has been saved to the server', function () {
+            // @ts-ignore
             return model.create(model.form.factory()).then(function (response) {
                 expect(response).toBeInstanceOf(model);
                 expect(response.get('slug')).toBeDefined();
@@ -161,10 +222,12 @@ var _loop_1 = function (model) {
                         if (testModel == undefined) {
                             throw Error('testModel not defined');
                         }
+                        // @ts-ignore
                         return [4 /*yield*/, model.find(testModel.get('slug')).then(function (response) {
                                 tmp_model = response;
                             })];
                     case 1:
+                        // @ts-ignore
                         _a.sent();
                         // @ts-ignore
                         if (tmp_model == undefined) {
@@ -199,10 +262,12 @@ var _loop_1 = function (model) {
                             })];
                     case 1:
                         _a.sent();
+                        // @ts-ignore
                         return [4 /*yield*/, model.find(slug).then(function (response) {
                                 expect(response).toBeUndefined();
                             })];
                     case 2:
+                        // @ts-ignore
                         _a.sent();
                         return [2 /*return*/];
                 }
@@ -220,4 +285,16 @@ for (var _i = 0, MODELS_1 = MODELS; _i < MODELS_1.length; _i++) {
     var model = MODELS_1[_i];
     _loop_1(model);
 }
+describe('Clean up', function () {
+    test('Models clean up', function () { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, cleanup()];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+});
 //# sourceMappingURL=Model.spec.js.map

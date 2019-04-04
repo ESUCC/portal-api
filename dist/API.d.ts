@@ -19,6 +19,8 @@ interface RequestData {
     params: UrlParams;
     type?: string;
     data?: JSON;
+    hasOptions?: boolean;
+    options?: JSON;
 }
 export {};
 //# sourceMappingURL=API.d.ts.map

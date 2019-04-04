@@ -113,7 +113,7 @@ var API = /** @class */ (function () {
             API.request({
                 'params': {
                     'm': model,
-                    'a': 'add',
+                    'a': 'edit',
                     'id': id
                 },
                 'data': data
@@ -167,8 +167,12 @@ var API = /** @class */ (function () {
             query.type = (query.hasOwnProperty('type') && query.type != undefined)
                 ? query.type
                 : 'POST';
+            query.hasOptions = query.hasOwnProperty('options');
             if (query.type.toLowerCase() == 'post') {
-                axios_1.default.post(API.url(query.params), qs_1.default.stringify(query.data))
+                axios_1.default.post(API.url(query.params), qs_1.default.stringify(query.data), 
+                // @ts-ignore
+                (query.hasOptions) ? query.options : undefined)
+                    // @ts-ignore
                     .then(function (response) {
                     if (Portal.Settings.DEBUG) {
                         console.log(response);
@@ -177,6 +181,7 @@ var API = /** @class */ (function () {
                         reject('Response declared request unsuccessful');
                     resolve(response.data);
                 })
+                    // @ts-ignore
                     .catch(function (error) {
                     if (Portal.Settings.DEBUG)
                         console.log(error);

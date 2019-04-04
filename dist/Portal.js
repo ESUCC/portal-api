@@ -44,14 +44,28 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var importSettings = __importStar(require("./Settings"));
 var API_1 = require("./API");
+var Image_1 = require("./datatypes/image/Image");
 var Model_1 = require("./Model");
 var App_1 = require("./models/App");
+var Attribute_1 = require("./models/Attribute");
+var Group_1 = require("./models/Group");
+var GroupType_1 = require("./models/GroupType");
+var IpAddress_1 = require("./models/IpAddress");
+var OwnerType_1 = require("./models/OwnerType");
+var Privilege_1 = require("./models/Privilege");
+var Tab_1 = require("./models/Tab");
 var User_1 = require("./models/User");
-var Image_1 = require("./datatypes/image/Image");
 exports.Settings = importSettings;
 exports.API = API_1.API;
 exports.Model = Model_1.Model;
 exports.App = App_1.App;
+exports.Attribute = Attribute_1.Attribute;
+exports.Group = Group_1.Group;
+exports.GroupType = GroupType_1.GroupType;
+exports.IpAddress = IpAddress_1.IpAddress;
+exports.OwnerType = OwnerType_1.OwnerType;
+exports.Privilege = Privilege_1.Privilege;
+exports.Tab = Tab_1.Tab;
 exports.User = User_1.User;
 function ucfirst(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -95,8 +109,29 @@ function init(options) {
                      * Boot models.
                      */
                     _a.sent();
-                    return [4 /*yield*/, exports.User.boot()];
+                    return [4 /*yield*/, exports.Attribute.boot()];
                 case 3:
+                    _a.sent();
+                    return [4 /*yield*/, exports.Group.boot()];
+                case 4:
+                    _a.sent();
+                    return [4 /*yield*/, exports.GroupType.boot()];
+                case 5:
+                    _a.sent();
+                    return [4 /*yield*/, exports.IpAddress.boot()];
+                case 6:
+                    _a.sent();
+                    return [4 /*yield*/, exports.OwnerType.boot()];
+                case 7:
+                    _a.sent();
+                    return [4 /*yield*/, exports.Privilege.boot()];
+                case 8:
+                    _a.sent();
+                    return [4 /*yield*/, exports.Tab.boot()];
+                case 9:
+                    _a.sent();
+                    return [4 /*yield*/, exports.User.boot()];
+                case 10:
                     _a.sent();
                     return [2 /*return*/];
             }

@@ -53,34 +53,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var Model_1 = require("../Model");
 var ModelInterface_1 = require("../interfaces/ModelInterface");
 var pluralize = require("pluralize");
 var Form_1 = require("../datatypes/form/Form");
-var ImageManager_1 = require("../datatypes/image/ImageManager");
-var Image_1 = require("../datatypes/image/Image");
-var Portal = __importStar(require("../Portal"));
-var App = /** @class */ (function (_super) {
-    __extends(App, _super);
-    function App(params) {
+var Tab = /** @class */ (function (_super) {
+    __extends(Tab, _super);
+    function Tab(params) {
         var _this = _super.call(this, params) || this;
-        _this.type = App_1;
-        _this.icon = new ImageManager_1.ImageManager();
-        _this.set('icon', _super.prototype.get.call(_this, 'icon'));
-        _super.prototype.set.call(_this, 'icon', undefined);
+        _this.type = Tab_1;
         (_this.type.booted || _this.type.boot());
         return _this;
     }
-    App_1 = App;
-    App.boot = function () {
+    Tab_1 = Tab;
+    Tab.boot = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -96,31 +83,13 @@ var App = /** @class */ (function (_super) {
             });
         });
     };
-    App.prototype.get = function (name) {
-        if (name == 'icon') {
-            // @ts-ignore
-            var rawIcon = this.icon.resolve().raw;
-            if (typeof rawIcon != 'string')
-                return undefined;
-            else
-                return rawIcon;
-        }
+    Tab.prototype.get = function (name) {
         return _super.prototype.get.call(this, name);
     };
-    App.prototype.set = function (name, value) {
-        if (name == 'icon' && this.icon.old == undefined) {
-            this.icon.old = new Image_1.Image();
-            this.icon.old.raw = value;
-        }
+    Tab.prototype.set = function (name, value) {
         return _super.prototype.set.call(this, name, value);
     };
-    App.prototype.getAttributes = function () {
-        var attributes = _super.prototype.getAttributes.call(this);
-        //  @ts-ignore
-        attributes.icon = this.get('icon');
-        return attributes;
-    };
-    App.all = function () {
+    Tab.all = function () {
         var _this = this;
         return _super.all.call(this, this.model_name).then(function (response) {
             var models = [];
@@ -131,7 +100,7 @@ var App = /** @class */ (function (_super) {
             return models;
         });
     };
-    App.find = function (id) {
+    Tab.find = function (id) {
         var _this = this;
         return _super.find.call(this, this.model_name, id).then(function (response) {
             if (!response.hasOwnProperty(_this.model_name))
@@ -140,35 +109,16 @@ var App = /** @class */ (function (_super) {
                 return new _this(response[_this.model_name]);
         });
     };
-    App.prototype.update = function () {
+    Tab.prototype.update = function () {
         var _this = this;
-        return Model_1.Model.find(this.type.model_name, this.get('slug')).then(function (response) {
-            _this.addAttributes(response[_this.type.model_name]);
-            return response;
+        return _super.prototype.update.call(this, this.type.model_name).then(function () {
+            return _this;
         });
     };
-    App.prototype.save = function () {
-        var _this = this;
-        var promise;
-        if (!this.type.form.validate(this.getAttributes())
-            && (this.get('slug') == undefined)) {
-            promise = Promise.reject(this.type.model_name + ' failed to validate.');
-        }
-        else if (this.get('slug') === undefined) {
-            promise = Portal.API.add(this.type.model_name, this.getAttributes()).then(function (response) {
-                _super.prototype.addAttributes.call(_this, response[_this.type.model_name]);
-                return response;
-            });
-        }
-        else {
-            promise = Portal.API.edit(this.type.model_name, this.get('slug'), this.getAttributes()).then(function (response) {
-                _super.prototype.addAttributes.call(_this, response[_this.type.model_name]);
-                return response;
-            });
-        }
-        return promise;
+    Tab.prototype.save = function () {
+        return _super.prototype.save.call(this, this.type.model_name, this.type);
     };
-    App.create = function (attributes) {
+    Tab.create = function (attributes) {
         return __awaiter(this, void 0, void 0, function () {
             var model;
             return __generator(this, function (_a) {
@@ -183,29 +133,29 @@ var App = /** @class */ (function (_super) {
             });
         });
     };
-    App.prototype.delete = function () {
+    Tab.prototype.delete = function () {
         return _super.prototype.delete.call(this, this.type.model_name, this.get('slug')).then(function (response) { return response.success; });
     };
-    App.define = function () {
+    Tab.define = function () {
         var _this = this;
         return _super.define.call(this, this.model_name).then(function (response) {
             _this.form = new Form_1.Form(response);
             return _this.form;
         });
     };
-    App.factory = function () {
+    Tab.factory = function () {
         return new this(this.form.factory());
     };
-    App.prototype.validate = function () {
-        return this.type.form.validate(this.getAttributes());
+    Tab.prototype.validate = function () {
+        return this.type.form.validate(_super.prototype.getAttributes.call(this));
     };
-    var App_1;
-    App.model_name = 'app';
-    App.booted = false;
-    App = App_1 = __decorate([
+    var Tab_1;
+    Tab.model_name = 'tab';
+    Tab.booted = false;
+    Tab = Tab_1 = __decorate([
         ModelInterface_1.staticImplements()
-    ], App);
-    return App;
+    ], Tab);
+    return Tab;
 }(Model_1.Model));
-exports.App = App;
-//# sourceMappingURL=App.js.map
+exports.Tab = Tab;
+//# sourceMappingURL=Tab.js.map

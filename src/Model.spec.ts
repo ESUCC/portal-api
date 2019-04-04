@@ -3,22 +3,50 @@ import {ModelInterface, ModelInterfaceStatic} from "./interfaces/ModelInterface"
 
 const MODELS = [
     Portal.App,
+    Portal.Attribute,
+    Portal.Group,
+    Portal.GroupType,
+    Portal.IpAddress,
+    Portal.OwnerType,
+    Portal.Privilege,
+    Portal.Tab,
     Portal.User,
 ];
 
 let modelAllLoaded = {};
+let fakedModels = {};
 let testModel: ModelInterface | undefined;
 
 async function modelAll(model: ModelInterfaceStatic) {
     if (! modelAllLoaded.hasOwnProperty(model.model_name)) {
-        await model.all().then((response: any) => {
+        await model.all().then(async (response: any) => {
+            let modelList = response;
+
+            if (response == undefined || (Array.isArray(response) && response.length == 0)) {
+                let tmp_model = model.factory();
+                await tmp_model.save();
+                modelList = [tmp_model];
+                // @ts-ignore
+                fakedModels[model.model_name] = [ tmp_model ];
+            }
+
             // @ts-ignore
-            modelAllLoaded[model.model_name] = response;
+            modelAllLoaded[model.model_name] = modelList;
         });
     }
 
     // @ts-ignore
     return modelAllLoaded[model.model_name];
+}
+
+async function cleanup() {
+    let keys = Object.keys(fakedModels);
+    for (let key of keys) {
+        // @ts-ignore
+        for (let model of fakedModels[key]) {
+            await model.delete();
+        }
+    }
 }
 
 for (let model of MODELS) {
@@ -46,6 +74,7 @@ for (let model of MODELS) {
         });
 
         test('`find(slug)` returns a promise with a ' + model.model_name + ' instance', () => {
+            // @ts-ignore
             return model.all().then(async (models) => {
                 let slug: string = '';
 
@@ -53,10 +82,10 @@ for (let model of MODELS) {
                     slug = all[0].get('slug');
                 });
 
+                // @ts-ignore
                 return model.find(slug).then((tmp_model) => {
                     // @ts-ignore
                     if (tmp_model == undefined) {
-                        console.log(tmp_model);
                         throw Error('tmp_model not defined');
                     }
 
@@ -85,6 +114,7 @@ for (let model of MODELS) {
 
         test('`create(attributes)` returns a promise with a '  + model.model_name +
             ' instance that has been saved to the server', () => {
+            // @ts-ignore
             return model.create(model.form.factory()).then((response) => {
                 expect(response).toBeInstanceOf(model);
                 expect(response.get('slug')).toBeDefined();
@@ -115,6 +145,7 @@ for (let model of MODELS) {
 
             let tmp_model: ModelInterface | undefined;
 
+            // @ts-ignore
             await model.find(testModel.get('slug')).then((response) => {
                 tmp_model = response;
             });
@@ -149,6 +180,7 @@ for (let model of MODELS) {
                 expect(response).toBeTruthy();
             });
 
+            // @ts-ignore
             await model.find(slug).then((response) => {
                 expect(response).toBeUndefined();
             });
@@ -163,3 +195,9 @@ for (let model of MODELS) {
         });
     });
 }
+
+describe('Clean up', () => {
+   test('Models clean up', async () => {
+      await cleanup();
+   });
+});

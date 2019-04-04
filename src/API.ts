@@ -66,7 +66,7 @@ export class API {
             API.request({
                     'params': {
                         'm': model,
-                        'a': 'add',
+                        'a': 'edit',
                         'id': id
                     },
                     'data': data
@@ -125,8 +125,15 @@ export class API {
                 ? query.type
                 : 'POST';
 
+            query.hasOptions = query.hasOwnProperty('options');
+
             if (query.type.toLowerCase() == 'post') {
-                axios.post(API.url(query.params), qs.stringify(query.data))
+                axios.post(API.url(query.params),
+                    qs.stringify(query.data),
+                    // @ts-ignore
+                    (query.hasOptions) ? query.options : undefined
+                )
+                    // @ts-ignore
                     .then((response) => {
                         if (Portal.Settings.DEBUG) {
                             console.log(response);
@@ -136,6 +143,7 @@ export class API {
                             reject('Response declared request unsuccessful');
                         resolve(response.data);
                     })
+                    // @ts-ignore
                     .catch((error) => {
                         if (Portal.Settings.DEBUG) console.log(error);
                         reject(error)
@@ -168,4 +176,6 @@ interface RequestData {
     params      :   UrlParams;
     type?       :   string;
     data?       :   JSON;
+    hasOptions? :   boolean;
+    options?    :   JSON;
 }

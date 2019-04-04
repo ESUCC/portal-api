@@ -3,6 +3,8 @@ import {ModelInterface, ModelInterfaceStatic, staticImplements} from "../interfa
 import pluralize = require("pluralize");
 import {Form} from "../datatypes/form/Form";
 import {ImageManager} from "../datatypes/image/ImageManager";
+import {Image} from "../datatypes/image/Image";
+import * as Portal from "../Portal";
 
 @staticImplements<ModelInterfaceStatic>()
 export class App extends Model implements ModelInterface {
@@ -31,14 +33,23 @@ export class App extends Model implements ModelInterface {
     }
 
     get(name: string) {
-        if (name == 'icon')
-            return this.icon.resolve();
+        if (name == 'icon') {
+            // @ts-ignore
+            let rawIcon = this.icon.resolve().raw;
+
+            if (typeof rawIcon != 'string') return undefined;
+            else return rawIcon;
+        }
+
         return super.get(name);
     }
 
     set(name: string, value: any) {
-        if (name == 'icon' && this.icon.old == undefined)
-            this.icon.old = value;
+        if (name == 'icon' && this.icon.old == undefined) {
+            this.icon.old = new Image();
+            this.icon.old.raw = value;
+        }
+
         return super.set(name, value);
     }
 
@@ -46,7 +57,7 @@ export class App extends Model implements ModelInterface {
         let attributes = super.getAttributes();
 
         //  @ts-ignore
-        attributes.icon = this.icon.resolve();
+        attributes.icon = this.get('icon');
 
         return attributes;
     }
@@ -71,15 +82,36 @@ export class App extends Model implements ModelInterface {
     }
 
     update() {
-        return super.update(this.type.model_name).then(() => {
-           return this;
+        return Model.find(this.type.model_name, this.get('slug')).then((response) => {
+            this.addAttributes(response[this.type.model_name]);
+
+            return response;
         });
     }
 
     save() {
+        let promise;
 
-        return super.save(this.type.model_name, this.type);
-    }
+        if (! this.type.form.validate(this.getAttributes())
+            && (this.get('slug') == undefined))
+        {
+            promise = Promise.reject(this.type.model_name + ' failed to validate.');
+        }
+        else if (this.get('slug') === undefined) {
+            promise = Portal.API.add(this.type.model_name, this.getAttributes()).then((response) => {
+                super.addAttributes(response[this.type.model_name]);
+
+                return response;
+            });
+        } else {
+            promise = Portal.API.edit(this.type.model_name, this.get('slug'), this.getAttributes()).then((response) => {
+                super.addAttributes(response[this.type.model_name]);
+
+                return response;
+            });
+        }
+
+        return promise;    }
 
     static async create(attributes: any) {
         let model = new this(attributes);

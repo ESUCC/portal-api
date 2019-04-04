@@ -1,9 +1,18 @@
 import * as importSettings from './Settings';
 import { API as importAPI } from './API';
-import { Model as importModel } from './Model';
-import { App as importApp } from './models/App';
-import { User as importUser } from './models/User';
 import { Image as importImage } from './datatypes/image/Image';
+
+import { Model as importModel } from './Model';
+
+import { App as importApp } from './models/App';
+import { Attribute as importAttribute } from "./models/Attribute";
+import { Group as importGroup } from "./models/Group";
+import { GroupType as importGroupType } from "./models/GroupType";
+import { IpAddress as importIpAddress } from "./models/IpAddress";
+import { OwnerType as importOwnerType } from "./models/OwnerType";
+import { Privilege as importPrivilege } from "./models/Privilege";
+import { Tab as importTab } from './models/Tab';
+import { User as importUser } from './models/User';
 
 export const Settings = importSettings;
 
@@ -14,6 +23,20 @@ export type Model = importModel;
 
 export const App = importApp;
 export type App = importApp;
+export const Attribute = importAttribute;
+export type Attribute = importAttribute;
+export const Group = importGroup;
+export type Group = importGroup;
+export const GroupType = importGroupType;
+export type GroupType = importGroupType;
+export const IpAddress = importIpAddress;
+export type IpAddress = importIpAddress;
+export const OwnerType = importOwnerType;
+export type OwnerType = importOwnerType;
+export const Privilege = importPrivilege;
+export type Privilege = importPrivilege;
+export const Tab = importTab;
+export type Tab = importTab;
 export const User = importUser;
 export type User = importUser;
 
@@ -46,6 +69,13 @@ export async function init(options?: OptionsInterface) {
      * Boot models.
      */
     await App.boot();
+    await Attribute.boot();
+    await Group.boot();
+    await GroupType.boot();
+    await IpAddress.boot();
+    await OwnerType.boot();
+    await Privilege.boot();
+    await Tab.boot();
     await User.boot();
 }
 

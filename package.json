@@ -1,13 +1,29 @@
 {
   "private": true,
   "name": "portal-api",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "A TypeScript library for interacting with the portal-ex server.",
   "main": "./dist/Portal.js",
   "scripts": {
+    "watch": "npm-watch build",
+    "watch-test": "npm-watch test",
     "prepare": "npm run build",
     "build": "tsc",
     "test": "jest"
+  },
+  "watch": {
+    "build": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "ts"
+    },
+    "test": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "ts,spec.ts"
+    }
   },
   "jest": {
     "transform": {
@@ -33,6 +49,7 @@
     "@types/validator": "^10.9.0",
     "axios": "^0.18.0",
     "faker": "^4.1.0",
+    "npm-watch": "^0.6.0",
     "pluralize": "^7.0.0",
     "qs": "^6.6.0",
     "validator": "^10.11.0"

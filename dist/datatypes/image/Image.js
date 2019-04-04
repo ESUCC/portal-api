@@ -9,7 +9,13 @@ var Image = /** @class */ (function () {
             element.addEventListener('change', function (event) {
                 // @ts-ignore
                 _this.file = event.target.files[0];
-                resolve(_this.file);
+                var fileReader = new FileReader();
+                fileReader.onload = function () {
+                    _this.raw = fileReader.result;
+                    resolve(_this);
+                };
+                // @ts-ignore
+                fileReader.readAsDataURL(_this.file);
             });
         });
     };
